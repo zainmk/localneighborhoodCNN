@@ -25,18 +25,15 @@ public class DigitImage {
         this.digitLabel = label;
     }
     
-    @Override // we override the toString method to print in this format when called on digitImage objects
+    @Override // we override the toString method to print accordingly on digitImage objects.
     public String toString(){
-
         String s = digitLabel + ", \n";
-
         for(int i = 0; i < digitData.length; i++){
             for(int j = 0; j < digitData[0].length; j++){
                 s += digitData[i][j] + ", ";   
             }
             s += "\n";
         }
-
         return s;
     }
 

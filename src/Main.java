@@ -10,7 +10,9 @@ public class Main {
         System.out.println("Hello World - Welcome to localneighborhoodCNN\n");
 
         List<DigitImage> digitImages = new DigitImageReader().readData("data/mnist_test.csv");
-        System.out.printf(digitImages.get(0).toString());
+        
+        // Test 1: Testing DigitImage output ~ this should test reading the MNIST data format and printing the digitImages objects created.
+        System.out.println(digitImages.get(0).toString());
 
 
     }
