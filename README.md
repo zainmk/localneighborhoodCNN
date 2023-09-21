@@ -7,3 +7,6 @@ https://youtu.be/3MMonOWGe0M ~ was used as an excellent reference here. Would fu
 
 Data Set:
 https://pjreddie.com/projects/mnist-in-csv/
+
+Additional References Used Along the Way...
+https://pyimagesearch.com/2021/05/14/convolutional-neural-networks-cnns-and-layer-types/
