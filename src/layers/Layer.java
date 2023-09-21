@@ -46,8 +46,8 @@ public abstract class Layer {
     //        and allow the network model's parameters to efficiently reach the optimal values.
     // Output: There is no output for the backpropagation as it will update respective layer's weights (and all following as connected).
     // Purpose: Goes back up the stack of layers being used and updates the weights accordingly based off the errors
-    public abstract void backPropagationAlg(double[] dldO);
-    public abstract void backPropagationAlg(List<double[][]> dldO);
+    public abstract void backPropagationAlg(double[] dLdO);
+    public abstract void backPropagationAlg(List<double[][]> dLdO);
 
 
     // Input: No inputs for these methods as they simlpy output charactersitics of the layer.
