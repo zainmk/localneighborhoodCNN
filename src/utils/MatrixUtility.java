@@ -4,7 +4,7 @@
  */
 
 
-package data;
+package utils;
 
 public class MatrixUtility {
 
@@ -88,6 +88,22 @@ public class MatrixUtility {
 
         return output;
 
+    }
+
+
+    // Helper function to find the maximum index as per its value.
+    public static int getMaxIndex(double[] input){
+        double max = 0;
+        int index = 0;
+
+        for(int i = 0; i < input.length; i++){
+            if(input[i] >= max){
+                max = input[i];
+                index = i;
+            }
+        }
+
+        return index;
     }
 
 

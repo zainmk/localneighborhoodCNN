@@ -58,12 +58,14 @@ public abstract class Layer {
     public abstract int getOutputCols();
     public abstract int getOutputElements();
 
-
     // Input: The matrix of image data List<double[][]>
     // Output: The corresponding one dimensional vector that has all the image data values stretched out (double[])
     // Purpose: We need to be able to convert the list of double[][] that represent the image data of pixels into a one dimensional vector that is compatible with our layer type and our intended ouput of classification.
     //          This will be used by all the layers and therefore is implemented here (and not kept as abstract)
     
+    
+    // TODO: Move the following methods to the matrix utility.
+
     public double[] matrixToVector(List<double[][]> input){
         int length = input.size();
         int rows = input.get(0).length;

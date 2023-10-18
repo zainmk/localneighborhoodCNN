@@ -10,17 +10,17 @@
  * 
  */
 
-
 package layers;
 
 import java.util.List;
 import java.util.Random;
-import java.util.ArrayList;
 
-import static data.MatrixUtility.add;
-import static data.MatrixUtility.multiply;
-import static data.MatrixUtility.flipArrayOnX;
-import static data.MatrixUtility.flipArrayOnY;
+import static utils.MatrixUtility.add;
+import static utils.MatrixUtility.flipArrayOnX;
+import static utils.MatrixUtility.flipArrayOnY;
+import static utils.MatrixUtility.multiply;
+
+import java.util.ArrayList;
 
 public class ConvolutionLayer extends Layer {
 
@@ -48,7 +48,7 @@ public class ConvolutionLayer extends Layer {
     }
 
     public void generateFilters(int numFilters){
-        List<double[][]> filters = new ArrayList();
+        List<double[][]> filters = new ArrayList<>();
 
         Random rand = new Random();
 
@@ -162,6 +162,7 @@ public class ConvolutionLayer extends Layer {
             }
         }
         return sum;
+        
     }
 
     // Spaces the array out and pads with 0's internally, around the step size, this is the resulting shape of the dL/dO, which when convolved with the inputs, will give us the desired dF/dL.
@@ -212,8 +213,8 @@ public class ConvolutionLayer extends Layer {
     @Override
     public void backPropagationAlg(List<double[][]> dLdO) {
 
-        List<double[][]> filtersDelta = new ArrayList();
-        List<double[][]> dLdOprevLayer = new ArrayList();
+        List<double[][]> filtersDelta = new ArrayList<>();
+        List<double[][]> dLdOprevLayer = new ArrayList<>();
 
         for(int i = 0; i < filters.size(); i++){
             filtersDelta.add(new double[filterSize][filterSize]);

@@ -71,11 +71,13 @@ public class FullyConnectedLayer extends Layer {
         double dZdX;
 
         for(int i = 0; i < inputLength; i++){
+
             double dLdX_sum = 0;
+
             for(int j = 0; j < outputLength; j++){
 
-                dZdW = lastInput[i];
                 dOdZ = d_relu(lastOutput[j]);
+                dZdW = lastInput[i];
                 dZdX = weights[i][j];
 
                 dLdW = dLdO[j]*dOdZ*dZdW;
