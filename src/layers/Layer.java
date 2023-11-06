@@ -58,6 +58,8 @@ public abstract class Layer {
     public abstract int getOutputCols();
     public abstract int getOutputElements();
 
+    public abstract void print();
+
     // Input: The matrix of image data List<double[][]>
     // Output: The corresponding one dimensional vector that has all the image data values stretched out (double[])
     // Purpose: We need to be able to convert the list of double[][] that represent the image data of pixels into a one dimensional vector that is compatible with our layer type and our intended ouput of classification.
@@ -92,6 +94,7 @@ public abstract class Layer {
         List<double[][]> output = new ArrayList<>();
 
         if(input.length != rows*cols*length){ // bound checking to see we have enough values
+            System.out.println("Input: " + input.length + " Length: " + length + " Rows: " + rows + " Cols: " + cols);
             throw new IllegalArgumentException("Invalid dimensions provided");
         }
 

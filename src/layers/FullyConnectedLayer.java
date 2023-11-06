@@ -32,6 +32,8 @@ public class FullyConnectedLayer extends Layer {
         this.outputLength = outputLength; // Define the number of output nodes for the layer.
         this.weights = new double[inputLength][outputLength]; // Create the size of the weights matrix depending on the # of inputs/outputs.
         this.learningRate = learningRate;
+
+        randomizeWeights();
     }
 
     // Purpose: For the fully connected layer, the getOutput will make use of our implemented 'forwardpass' but can still take the matrix of weights as input.
@@ -47,6 +49,7 @@ public class FullyConnectedLayer extends Layer {
 
         // If there is a next layer, the output must get processed by the next network layer so we call the 'getOutput' on the next one
         // otherwise, the output is the final output and the forwardpass is just returned.
+        
         return (nextLayer != null) ? nextLayer.getOutput(forwardPass) : forwardPass;
     }
 
@@ -104,7 +107,7 @@ public class FullyConnectedLayer extends Layer {
         backPropagationAlg(matrixToVector(dLdO));
     }
 
-    // The intended output for this layer is a one dimensioanl vector, therefore the rows, columns and length are all 0 while the elements are N.
+    // The intended output for this layer is a one dimensional vector, therefore the rows, columns and length are all 0 while the elements are N.
 
     @Override
     public int getOutputLength() {
@@ -124,6 +127,20 @@ public class FullyConnectedLayer extends Layer {
     @Override
     public int getOutputElements() {
         return outputLength;
+    }
+
+    @Override
+    public void print(){
+        System.out.println("Fully Connected Layer: \nInputLength:" + inputLength + "\nOutputLength: " + outputLength);
+        System.out.println("Weights...");
+        
+        for(double[] weight: weights){
+            for(double w: weight){
+                System.out.print(w + " , ");
+            }
+            System.out.println();
+        }
+     
     }
 
     // The initial weights of the network need to be randomized for an 'unbiased' starting point where the network can 'start' to train from.
@@ -148,21 +165,21 @@ public class FullyConnectedLayer extends Layer {
         lastInput = input;
 
         double[] z_output = new double[outputLength];
+        double[] relu_output = new double[outputLength]; // Applying activation function (relu) to the output nodes.
+
         for(int i = 0; i < inputLength; i++){
             for(int j = 0; j < outputLength; j++){
                 z_output[j] += input[i]*weights[i][j]; // size of output is # of output nodes (j)
             }
         }
 
-        // Applying activation function (relu) to the output nodes.
-        double[] relu_output = new double[outputLength];
+        lastOutput = z_output; // Need a seperate reference to keep a hold of the unfilteredOutput.
+
         for(int i = 0; i < inputLength; i++){
             for(int j = 0; j < outputLength; j++){
                 relu_output[j] = relu(z_output[j]);
             }
         }
-
-        // lastZ = z; Need a seperate reference to keep a hold of the unfilteredOutput.
 
         return relu_output;
     }
@@ -178,7 +195,7 @@ public class FullyConnectedLayer extends Layer {
             return 0;
         }
         else{
-            return 0;
+            return input;
         }
     }
 

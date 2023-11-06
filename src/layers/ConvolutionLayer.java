@@ -14,13 +14,13 @@ package layers;
 
 import java.util.List;
 import java.util.Random;
+import java.util.ArrayList;
 
 import static utils.MatrixUtility.add;
 import static utils.MatrixUtility.flipArrayOnX;
 import static utils.MatrixUtility.flipArrayOnY;
 import static utils.MatrixUtility.multiply;
 
-import java.util.ArrayList;
 
 public class ConvolutionLayer extends Layer {
 
@@ -33,8 +33,6 @@ public class ConvolutionLayer extends Layer {
     private List<double[][]> prevInput;
     private double learningRate;
 
-
-    // Consider adding SEED to keep the values consistent 
     public ConvolutionLayer(int filterSize, int stepSize, int inputLength, int inputRows, int inputCols, int numFilters, double learningRate){
         this.filterSize = filterSize;
         this.stepSize = stepSize;
@@ -44,49 +42,38 @@ public class ConvolutionLayer extends Layer {
         this.learningRate = learningRate;
 
         generateFilters(numFilters);
-
     }
 
     public void generateFilters(int numFilters){
         List<double[][]> filters = new ArrayList<>();
-
         Random rand = new Random();
-
-        for(int i=0; i < numFilters; i++){
-            double[][] newFilter = new double[filterSize][filterSize]; // square filters
-            for(int j=0; j < filterSize; j++){
-                for(int k = 0; k < filterSize; k++){
-
-                    newFilter[j][k] = rand.nextGaussian();
-
+        for(int n = 0; n < numFilters; n++){
+            double[][] newFilter = new double[filterSize][filterSize]; // always using square filters
+            for(int i=0; i < filterSize; i++){
+                for(int j = 0; j < filterSize; j++){
+                    newFilter[i][j] = rand.nextGaussian(); // Using random values on the normal distribution
                 }
             }
-
             filters.add(newFilter);
-
         }
-
-        this.filters = filters; // maybe this does not work ?
+        this.filters = filters; 
     }
 
 
     public List<double[][]> forwardPass(List<double[][]> list){
-        
+        prevInput = list; // keep a reference for the last input (to be used for backpropagation)
         List <double[][]> output = new ArrayList<>();
-        prevInput = list; // keep a reference for the input (for backpropagation)
 
         for(int i = 0; i < list.size(); i++){
-            for(double[][] filter : this.filters){
+            for(double[][] filter : filters){
                 output.add(convolve(list.get(i), filter, stepSize));
             }
         }
 
         return output;
-
     }
 
     public double[][] convolve(double[][] input, double[][] filter, int stepSize){
-
         int outputRows = (input.length - filter.length)/stepSize + 1;
         int outputCols = (input[0].length - filter[0].length)/stepSize + 1;
 
@@ -101,13 +88,26 @@ public class ConvolutionLayer extends Layer {
         int outputRow = 0;
         int outputCol;
 
-        for(int i = 0; i <= inputRows - filterRows; i+=stepSize){ // Keeps the filter contained within the output matrix.
-            
+        for(int i = 0; i <= inputRows - filterRows; i+=stepSize){ // Keep the filter contained within the output matrix.
             outputCol = 0;
-            
+
             for(int j = 0; j <= inputCols - filterCols; j+=stepSize){
-            
-                output[outputRow][outputCol] = applyFilter(input, filter, i, j);
+                double sum = 0.0;
+
+                for(int x = 0; i < filter.length; x++){
+                    for(int y = 0; y < filter[0].length; y++){
+                        int inputRowIndex = x + i;
+                        int inputColIndex = y + j;
+
+                        //Check for when using filters in negative indices (for full convolve, but the filter overlaps the input)
+                        if(inputRowIndex >= 0 && inputColIndex >= 0 && inputRowIndex < inputRows && inputColIndex < inputCols){
+                            double value = filter[i][j] * input[inputRowIndex][inputColIndex];
+                            sum+= value;
+                        }
+                    }
+                }
+
+                output[outputRow][outputCol] = sum;
                 outputCol++;
             }
             outputRow++;
@@ -118,7 +118,6 @@ public class ConvolutionLayer extends Layer {
 
     // Full convolution required when backpropagating the loss to the previous layer.
     public double[][] fullConvolve(double[][] input, double[][] filter){
-
         int outputRows = (input.length + filter.length) + 1; // Adding the size, as the filter can go over the matrix
         int outputCols = (input[0].length + filter[0].length) + 1;
 
@@ -135,12 +134,24 @@ public class ConvolutionLayer extends Layer {
 
         for(int i = -filterRows + 1; i < inputRows; i++){ // Keeps the filter contained within the output matrix. Negative indices dictate a filter value outside of the input matrix.
             outputCol = 0;
-
+            
             for(int j = -filterCols + 1; j < inputCols; j++){
-                output[outputRow][outputCol] = applyFilter(input, filter, i, j);
-                outputCol++;
+                double sum = 0.0;
+                for(int x = 0; x < filterRows; x++){
+                    for(int y = 0; y < filterCols; y++){
+                        int inputRowIndex = i+x;
+                        int inputColIndex = j+y;
 
+                        if(inputRowIndex >= 0 && inputColIndex >= 0 && inputRowIndex < inputRows && inputColIndex < inputCols){
+                            double value = filter[x][y] * input[inputRowIndex][inputColIndex];
+                            sum+= value;
+                        }
+                    }
+                }
+                output[outputRow][outputCol] = sum;
+                outputCol++;
             }
+
             outputRow++;
         }
 
@@ -162,7 +173,6 @@ public class ConvolutionLayer extends Layer {
             }
         }
         return sum;
-        
     }
 
     // Spaces the array out and pads with 0's internally, around the step size, this is the resulting shape of the dL/dO, which when convolved with the inputs, will give us the desired dF/dL.
@@ -173,12 +183,10 @@ public class ConvolutionLayer extends Layer {
 
         int outRows = (input.length - 1)*stepSize + 1;
         int outCols = (input[0].length - 1)*stepSize + 1;
-
         double[][] output = new double[outRows][outCols];
 
         // Traversing through the input matrix...
         for(int i = 0; i < input.length; i++){
-
             for(int j = 0; j < input[0].length; j++){
                 output[i*stepSize][j*stepSize] = input[i][j];
 
@@ -186,10 +194,7 @@ public class ConvolutionLayer extends Layer {
         }
 
         return output;
-
     }
-
-
 
 
     @Override
@@ -212,7 +217,6 @@ public class ConvolutionLayer extends Layer {
 
     @Override
     public void backPropagationAlg(List<double[][]> dLdO) {
-
         List<double[][]> filtersDelta = new ArrayList<>();
         List<double[][]> dLdOprevLayer = new ArrayList<>();
 
@@ -275,6 +279,11 @@ public class ConvolutionLayer extends Layer {
     @Override
     public int getOutputElements() {
         return getOutputLength()*getOutputRows()*getOutputCols();
+    }
+
+    @Override
+    public void print(){
+        System.out.println("Convolution Layer... \nfilterSize: " + filterSize + "\nStep:" + stepSize + "\ninputRows:" + inputRows + "\ninputCols:" + inputCols + " \ninputLength: " + inputLength + "\nOutput Length:" + getOutputLength() + "\nOutput Rows:" + getOutputRows() + "\nOutput Cols:" + getOutputCols());
     }
     
 }

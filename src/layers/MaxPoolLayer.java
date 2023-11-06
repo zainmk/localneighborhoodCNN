@@ -52,26 +52,21 @@ public class MaxPoolLayer extends Layer {
         int[][] maxRows = new int[getOutputRows()][getOutputCols()];
         int[][] maxCols = new int[getOutputRows()][getOutputCols()];
 
-
         for(int i = 0; i < getOutputRows(); i += stepSize){
             for(int j = 0; j < getOutputCols(); j += stepSize){
 
                 //Now within the pooling window...
-
                 double max = 0.0;
                 maxRows[i][j] = -1;
                 maxCols[i][j] = -1;
 
                 for(int k = 0; k < windowSize; k++){
                     for(int l = 0; l < windowSize; l++){
-
                         if(max < input[i + k][j + l]){
                             max = input[i + k][j + l];
                             maxRows[i][j] = i + k;
                             maxCols[i][j] = j + l;
                         }
-
-
                     }
                 }
 
@@ -90,7 +85,7 @@ public class MaxPoolLayer extends Layer {
     @Override
     public double[] getOutput(List<double[][]> input) {
         List<double[][]> outputPool = forwardPass(input);
-        return (nextLayer != null) ? nextLayer.getOutput(outputPool) : getOutput(outputPool);
+        return nextLayer.getOutput(outputPool);
     }
 
     @Override
@@ -113,7 +108,7 @@ public class MaxPoolLayer extends Layer {
 
         for(double[][] LossOutputArray : dLdO){
             double[][] error = new double[inputRows][inputCols];
-            for(int i = 0; i < getOutputRows(); i++){
+            for(int i = 0; i < getOutputRows(); i++){   
                 for(int j = 0; j < getOutputCols(); j++){
 
                     int maxRow = lastMaxRows.get(l)[i][j];
@@ -155,6 +150,10 @@ public class MaxPoolLayer extends Layer {
     @Override
     public int getOutputElements() {
         return inputLength*getOutputRows()*getOutputCols();
+    }
+
+    public void print(){
+        System.out.println("MaxPoolLayer: \nStep: " + stepSize + "\nWindow:" + windowSize + "\ninputLength: " + inputLength + "\ninputRows: " + inputRows + "\ninputCols: " + inputCols + "\nOutput Length: " + getOutputLength() + "\nOutput Rows:" + getOutputRows() + "\nOutput Cols:" + getOutputCols());
     }
     
 }

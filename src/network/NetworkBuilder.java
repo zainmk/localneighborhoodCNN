@@ -44,7 +44,7 @@ public class NetworkBuilder {
     // For creating/adding the max pool layer, with similar considerations
     public void addMaxPoolLayer(int stepSize, int windowSize){
         if(layers.isEmpty()){
-            layers.add(new MaxPoolLayer(stepSize, windowSize, 1, inputRows, inputCols)); // Input length is always 1 for the max pool layer.
+            layers.add(new MaxPoolLayer(stepSize, windowSize, 1, inputRows, inputCols));
         }
         else{
             Layer prev = layers.get(layers.size() - 1);
@@ -60,7 +60,7 @@ public class NetworkBuilder {
         }
         else{
             Layer prev = layers.get(layers.size() - 1);
-            layers.add(new FullyConnectedLayer(prev.getOutputLength(), outputLength, learningRate));
+            layers.add(new FullyConnectedLayer(prev.getOutputElements(), outputLength, learningRate));
         }
     }
 

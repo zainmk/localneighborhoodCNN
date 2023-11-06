@@ -29,7 +29,7 @@ public class NeuralNetwork {
     // This will call on the getter/setters for the layer to link them for the neural network
     private void linkLayers(){
 
-        if(layers.size() == 1){
+        if(layers.size() <= 1){
             return ;
         }
 
@@ -73,7 +73,9 @@ public class NeuralNetwork {
         // Calling it on the first layer, will allow it to propagate through the layers.
         double[] output = layers.get(0).getOutput(inputList);
 
-        return getMaxIndex(output); // The max index is the actual digit number value.
+        int guess = getMaxIndex(output);
+
+        return guess; // The max index is the actual digit number value.
     }
 
 
@@ -88,7 +90,7 @@ public class NeuralNetwork {
             }
         }
 
-        return (float)(correct/images.size()); // Perecentage of correct.
+        return ((float)correct/images.size()); // Perecentage of correct.
     }
 
     public void train(List<DigitImage> images){
@@ -97,7 +99,7 @@ public class NeuralNetwork {
             List<double[][]> inputList = new ArrayList<>();
             inputList.add(multiply(image.getDigitData(), (1.0/scalingFactor)));
 
-            double[] output = layers.get(0).getOutput(inputList); // Again, the output will propagate through the connected layers.
+            double[] output = layers.get(0).getOutput(inputList); // Again, the output will propagate through the connected layers (starting from the first layer)
             double[] dLdO = getError(output, image.getDigitLabel());
 
             layers.get((layers.size() - 1)).backPropagationAlg(dLdO); // Update the weights based on the calculated errors, with the relevant backPropagation (starting from the last layer ~ which will also 'propagate backwards' through the layers)
@@ -107,13 +109,12 @@ public class NeuralNetwork {
     }
 
     // Print function for the network to show the network and aid in debugging.
-    public void print(){
+    public void print(){ // TODO: replace with built in 'toString()' methods for each class.
         for(Layer layer: layers){
-            System.out.println(layer);
+            layer.print(); // Call the print method for each layer.
+            System.out.println("\n");
         }
     }
-
-
 
 
 }
