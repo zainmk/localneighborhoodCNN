@@ -132,15 +132,6 @@ public class FullyConnectedLayer extends Layer {
     @Override
     public void print(){
         System.out.println("Fully Connected Layer: \nInputLength:" + inputLength + "\nOutputLength: " + outputLength);
-        System.out.println("Weights...");
-        
-        for(double[] weight: weights){
-            for(double w: weight){
-                System.out.print(w + " , ");
-            }
-            System.out.println();
-        }
-     
     }
 
     // The initial weights of the network need to be randomized for an 'unbiased' starting point where the network can 'start' to train from.

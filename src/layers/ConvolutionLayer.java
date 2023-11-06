@@ -92,22 +92,7 @@ public class ConvolutionLayer extends Layer {
             outputCol = 0;
 
             for(int j = 0; j <= inputCols - filterCols; j+=stepSize){
-                double sum = 0.0;
-
-                for(int x = 0; i < filter.length; x++){
-                    for(int y = 0; y < filter[0].length; y++){
-                        int inputRowIndex = x + i;
-                        int inputColIndex = y + j;
-
-                        //Check for when using filters in negative indices (for full convolve, but the filter overlaps the input)
-                        if(inputRowIndex >= 0 && inputColIndex >= 0 && inputRowIndex < inputRows && inputColIndex < inputCols){
-                            double value = filter[i][j] * input[inputRowIndex][inputColIndex];
-                            sum+= value;
-                        }
-                    }
-                }
-
-                output[outputRow][outputCol] = sum;
+                output[outputRow][outputCol] = applyFilter(input, filter, i, j);
                 outputCol++;
             }
             outputRow++;

@@ -24,6 +24,8 @@ public class Main {
 
         NeuralNetwork net = builder.build();
 
+        net.print();
+
         float rate = net.test(testImages);
         System.out.println("Pre Training Sucess Rate: " + rate);
 
@@ -32,8 +34,6 @@ public class Main {
 
         rate = net.test(testImages);
         System.out.println("Post Training Success Rate: " + rate);
-
-        net.print();
 
     }
 }
